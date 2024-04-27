@@ -18,34 +18,37 @@ const allowedCorsHeaders = {
   "Access-Control-Allow-Methods": "*",
 };
 
+const allowedExtensions = ["jpg", "jpeg", "png", "svg", "gif"];
+
 export async function getSignedUrlHandler(event) {
   console.log(event);
-  const { filename } = event.queryStringParameters;
+  const filename = event.queryStringParameters?.filename;
+
+  if (!filename) {
+    return getResponse(400, { message: "No filename in query" });
+  }
+
+  const extension = getExtension(filename);
+
+  if (!allowedExtensions.includes(extension)) {
+    return getResponse(400, {
+      message: "File is either not an image or of unsupported type",
+      allowedTypes: allowedExtensions,
+    });
+  }
 
   try {
     const link = await getUrl(filename);
-    return {
-      statusCode: 200,
-      headers: allowedCorsHeaders,
-      body: JSON.stringify({
-        link,
-      }),
-    };
+    return getResponse(200, { link });
   } catch (error) {
     console.log(error);
-    return {
-      statusCode: 500,
-      headers: allowedCorsHeaders,
-      body: JSON.stringify({
-        error,
-      }),
-    };
+    return getResponse(500, { error });
   }
 }
 
 async function getUrl(filename) {
   try {
-    const extension = filename.substring(filename.lastIndexOf(".") + 1);
+    const extension = getExtension(filename);
     const key = `${randomUUID()}.${extension}`;
 
     const command = new PutObjectCommand({
@@ -61,4 +64,16 @@ async function getUrl(filename) {
     console.error("Error getting signed URL:", error);
     throw error;
   }
+}
+
+function getExtension(filename) {
+  return filename.substring(filename.lastIndexOf(".") + 1);
+}
+
+function getResponse(statusCode, body) {
+  return {
+    statusCode,
+    headers: allowedCorsHeaders,
+    body: JSON.stringify(body),
+  };
 }
