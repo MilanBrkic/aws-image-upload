@@ -61,14 +61,15 @@ Resources:
     Type: "AWS::S3::Bucket"
     Properties:
       BucketName: full-res-image-bucket
-      # CorsConfiguration:
-      #   CorsRules:
-      #     - AllowedHeaders:
-      #         - "*"
-      #     - AllowedMethods:
-      #         - PUT
-      #     - AllowedOrigins:
-      #         - "*"
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - "*"
+            AllowedMethods:
+              - GET
+              - PUT
+            AllowedOrigins:
+              - "*"
 
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
@@ -87,6 +88,9 @@ Outputs:
   WebEndpoint:
     Description: API Gateway endpoint URL for Prod stage
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  BucketName:
+    Value: !Ref FullResImageBucket
+    Description: Name of the sample Amazon S3 bucket with CORS enabled.
 
 # # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 
