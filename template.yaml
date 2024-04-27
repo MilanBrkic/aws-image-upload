@@ -61,6 +61,11 @@ Resources:
     Type: "AWS::S3::Bucket"
     Properties:
       BucketName: full-res-image-bucket
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
       CorsConfiguration:
         CorsRules:
           - AllowedHeaders:
