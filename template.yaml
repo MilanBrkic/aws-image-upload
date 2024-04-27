@@ -10,21 +10,18 @@ Resources:
   # Each Lambda function is defined by properties:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
-  # This is a Lambda function config associated with the source code: get-all-items.js
   getSignedUrlHandler:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/get-url.getSignedUrlHandler
+      Handler: src/handlers/get-signed-url.getSignedUrlHandler
       Runtime: nodejs20.x
       Architectures:
         - x86_64
       MemorySize: 128
       Timeout: 29
-      Description:
-        A simple example includes a HTTP get method to get all items from
-        a DynamoDB table.
+      Description: A simple example includes a HTTP get method that returns
+        the presigned url for image upload
       Policies:
-
       Environment:
       Events:
         Api:
@@ -32,79 +29,46 @@ Resources:
           Properties:
             Path: /presigned-url
             Method: GET
+            RestApiId: !Ref ServerlessRestApi
+          Cors:
+            AllowMethods: "'GET'" # Methods you want to allow
+            AllowHeaders: "'Content-Type'" # Headers you want to allow
+            AllowOrigin: "'*'"
   # Each Lambda function is defined by properties:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
-  # This is a Lambda function config associated with the source code: get-by-id.js
-  # getByIdFunction:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     Handler: src/handlers/get-by-id.getByIdHandler
-  #     Runtime: nodejs20.x
-  #     Architectures:
-  #       - x86_64
-  #     MemorySize: 128
-  #     Timeout: 100
-  #     Description:
-  #       A simple example includes a HTTP get method to get one item by
-  #       id from a DynamoDB table.
-  #     Policies:
-  #       # Give Create/Read/Update/Delete Permissions to the SampleTable
-  #       - DynamoDBCrudPolicy:
-  #           TableName: !Ref SampleTable
-  #     Environment:
-  #       Variables:
-  #         # Make table name accessible as environment variable from function code during execution
-  #         SAMPLE_TABLE: !Ref SampleTable
-  #     Events:
-  #       Api:
-  #         Type: Api
-  #         Properties:
-  #           Path: /{id}
-  #           Method: GET
-  # # Each Lambda function is defined by properties:
-  # # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  GenerateThumb:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/generate-thumb.generateThumb
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 29
+      Description: A Lambda function that is triggered on every bucket upload
+        that generates an image thumbnail
+      Policies:
+      Environment:
+      Events:
+        S3Event:
+          Type: S3
+          Properties:
+            Bucket: !Ref FullResImageBucket
+            Events: s3:ObjectCreated:*
 
-  # # This is a Lambda function config associated with the source code: put-item.js
-  # putItemFunction:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     Handler: src/handlers/put-item.putItemHandler
-  #     Runtime: nodejs20.x
-  #     Architectures:
-  #       - x86_64
-  #     MemorySize: 128
-  #     Timeout: 100
-  #     Description:
-  #       A simple example includes a HTTP post method to add one item to
-  #       a DynamoDB table.
-  #     Policies:
-  #       # Give Create/Read/Update/Delete Permissions to the SampleTable
-  #       - DynamoDBCrudPolicy:
-  #           TableName: !Ref SampleTable
-  #     Environment:
-  #       Variables:
-  #         # Make table name accessible as environment variable from function code during execution
-  #         SAMPLE_TABLE: !Ref SampleTable
-  #     Events:
-  #       Api:
-  #         Type: Api
-  #         Properties:
-  #           Path: /
-  #           Method: POST
-  # Simple syntax to create a DynamoDB table with a single attribute primary key, more in
-  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlesssimpletable
-
-  # DynamoDB table to store item: {id: &lt;ID&gt;, name: &lt;NAME&gt;}
-  # SampleTable:
-  #   Type: AWS::Serverless::SimpleTable
-  #   Properties:
-  #     PrimaryKey:
-  #       Name: id
-  #       Type: String
-  #     ProvisionedThroughput:
-  #       ReadCapacityUnits: 2
-  #       WriteCapacityUnits: 2
+  FullResImageBucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: full-res-image-bucket
+      # CorsConfiguration:
+      #   CorsRules:
+      #     - AllowedHeaders:
+      #         - "*"
+      #     - AllowedMethods:
+      #         - PUT
+      #     - AllowedOrigins:
+      #         - "*"
 
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
@@ -123,6 +87,7 @@ Outputs:
   WebEndpoint:
     Description: API Gateway endpoint URL for Prod stage
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+
 # # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 
 Globals:

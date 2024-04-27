@@ -15,14 +15,16 @@ const bucketParams = {
 export async function getSignedUrlHandler(event) {
   console.log(event);
   const { filename } = event.queryStringParameters;
-  console.log("Filename: " + filename);
 
   try {
-    console.log("Before get url");
     const link = await getUrl(filename);
-    console.log("After get url", link);
     return {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
+      },
       body: JSON.stringify({
         link,
       }),
