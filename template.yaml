@@ -76,6 +76,19 @@ Resources:
             AllowedOrigins:
               - "*"
 
+  BucketPolicy:
+    Type: "AWS::S3::BucketPolicy"
+    Properties:
+      Bucket: !Ref FullResImageBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "Statement1"
+            Effect: "Allow"
+            Principal: "*"
+            Action: "s3:PutObject"
+            Resource: "arn:aws:s3:::full-res-image-bucket/*"
+
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
     Properties:
