@@ -12,6 +12,12 @@ const bucketParams = {
   Bucket: "full-res-image-bucket",
 };
 
+const allowedCorsHeaders = {
+  "Access-Control-Allow-Headers": "*",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "*",
+};
+
 export async function getSignedUrlHandler(event) {
   console.log(event);
   const { filename } = event.queryStringParameters;
@@ -20,11 +26,7 @@ export async function getSignedUrlHandler(event) {
     const link = await getUrl(filename);
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Headers": "*",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "*",
-      },
+      headers: allowedCorsHeaders,
       body: JSON.stringify({
         link,
       }),
@@ -33,6 +35,7 @@ export async function getSignedUrlHandler(event) {
     console.log(error);
     return {
       statusCode: 500,
+      headers: allowedCorsHeaders,
       body: JSON.stringify({
         error,
       }),
