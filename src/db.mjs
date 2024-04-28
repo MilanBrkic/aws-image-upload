@@ -1,27 +1,52 @@
 import pg from "pg";
 
-const HOST = "imagedb.cpa86akswk7j.eu-central-1.rds.amazonaws.com";
-const PORT = process.env.PORT ?? 5432;
-const DATABASE = process.env.DB_NAME ?? "postgres";
-const USER = process.env.DB_USER ?? "milanb";
-const PASSWORD = process.env.DB_PASSWORD ?? "neka_sifra";
-
 export async function dbConnect() {
-  console.log("PROCESS ENV DB_HOST" + process.env.DB_HOST);
   const config = {
-    host: HOST,
-    port: PORT,
-    database: DATABASE,
-    user: USER,
-    password: PASSWORD,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
   };
 
   console.log(config);
   const client = new pg.Client(config);
 
   await client.connect();
+  return client;
+}
 
-  const res = await client.query("SELECT version()");
-  console.log("RESPONSE: " + JSON.stringify(res, null, 2));
+/**
+ *
+ * @param {pg.Client} client
+ */
+export async function createTable(client) {
+  await client.query(`
+        CREATE TABLE IF NOT EXISTS image(
+          image_id uuid NOT NULL,
+          filename TEXT NOT NULL,
+          content_type TEXT NOT NULL,
+          PRIMARY KEY (image_id)
+        );
+  `);
+}
+
+/**
+ *
+ * @param {pg.Client} client
+ */
+export async function insertImage(imageId, filename, contentType) {
+  const client = await dbConnect();
+
+  await createTable(client);
+
+  await client.query(
+    `
+      INSERT INTO image
+      VALUES($1,$2,$3);
+    `,
+    [imageId, filename, contentType]
+  );
+
   await client.end();
 }

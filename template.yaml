@@ -60,7 +60,7 @@ Resources:
           DB_PORT: 5432
           DB_NAME: postgres
           DB_USER: milanb
-          DB_PASSWORD: neka_sifra
+          DB_PASSWORD:
       Events:
         S3Event:
           Type: S3
@@ -96,8 +96,6 @@ Resources:
       MasterUsername: milanb
       MasterUserPassword: neka_sifra
       DBInstanceIdentifier: imagedb
-      # VPCSecurityGroups:
-      #   - !Ref LocalHostSecurityGroup
 
   ThumbnailImageBucket:
     Type: "AWS::S3::Bucket"
@@ -132,16 +130,6 @@ Resources:
             Resource: "arn:aws:s3:::thumbnail-image-bucket/*"
       Roles:
         - !Ref GenerateThumbRole
-
-  # LocalHostSecurityGroup:
-  #   Type: AWS::EC2::SecurityGroup
-  #   Properties:
-  #     GroupDescription: Security group for the RDS DB instance
-  #     SecurityGroupIngress:
-  #       - IpProtocol: tcp
-  #         FromPort: 5432 # Assuming your PostgreSQL is running on default port 5432
-  #         ToPort: 5432
-  #         CidrIp: 0.0.0.0/0
 
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
