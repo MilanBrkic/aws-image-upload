@@ -27,7 +27,7 @@
             "arn": "arn:aws:s3:::example-bucket"
           },
           "object": {
-            "key": "176fe472-9550-414f-88fe-f13d9fb56e22",
+            "key": "55fc6aac-1061-4b3d-89bd-c04118dd8092",
             "size": 1024,
             "eTag": "0123456789abcdef0123456789abcdef",
             "sequencer": "0A1B2C3D4E5F678901"

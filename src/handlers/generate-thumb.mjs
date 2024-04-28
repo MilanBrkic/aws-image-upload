@@ -5,6 +5,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { getResponse } from "../util.mjs";
 import Jimp from "jimp";
+import { dbConnect } from "../db.mjs";
 
 const S3 = new S3Client();
 const FULL_RES_BUCKET =
@@ -24,6 +25,8 @@ export async function generateThumb(event) {
   const key = record.s3.object.key;
 
   try {
+    await dbConnect();
+
     const { contentType, metadata } = await uploadThumbnail(key);
 
     return getResponse(200, {});
