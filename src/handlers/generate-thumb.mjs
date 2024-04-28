@@ -3,8 +3,8 @@ import {
   GetObjectCommand,
   PutObjectCommand,
 } from "@aws-sdk/client-s3";
-import sharp from "sharp";
 import { getResponse } from "../util.mjs";
+import Jimp from "jimp";
 
 const S3 = new S3Client();
 const FULL_RES_BUCKET =
@@ -24,6 +24,8 @@ export async function generateThumb(event) {
   const key = record.s3.object.key;
 
   try {
+    console.log("before get");
+
     const { Body, ContentType } = await S3.send(
       new GetObjectCommand({
         Bucket: FULL_RES_BUCKET,
@@ -31,10 +33,10 @@ export async function generateThumb(event) {
       })
     );
 
-    console.log("BODY ", Body);
+    console.log("after get");
 
-    const image = await Body.transformToByteArray();
-    const outputBuffer = await sharp(image).resize(THUMBNAIL_WIDTH).toBuffer();
+    const buff = Buffer.from(await Body.transformToByteArray());
+    const outputBuffer = await resizeImage(buff);
 
     await S3.send(
       new PutObjectCommand({
@@ -50,7 +52,21 @@ export async function generateThumb(event) {
     return getResponse(200, { message });
   } catch (error) {
     console.log(error);
-
     return getResponse(500, { error });
+  }
+}
+
+export async function resizeImage(buffer) {
+  try {
+    const image = await Jimp.read(buffer);
+
+    image.resize(THUMBNAIL_WIDTH, Jimp.AUTO);
+
+    const resizedBuffer = await image.getBufferAsync(Jimp.MIME_JPEG);
+
+    return resizedBuffer;
+  } catch (error) {
+    console.error("Error resizing image:", error);
+    throw error;
   }
 }

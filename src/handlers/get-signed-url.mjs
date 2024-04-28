@@ -10,7 +10,7 @@ const s3 = new S3({
   region: REGION,
 });
 
-const allowedExtensions = ["jpg", "jpeg", "png", "svg", "gif"];
+const allowedExtensions = ["jpg", "jpeg", "png"];
 
 export async function getSignedUrlHandler(event) {
   console.log(event);
