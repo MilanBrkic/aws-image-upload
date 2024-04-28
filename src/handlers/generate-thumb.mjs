@@ -24,40 +24,42 @@ export async function generateThumb(event) {
   const key = record.s3.object.key;
 
   try {
-    console.log("before get");
+    const { contentType, metadata } = await uploadThumbnail(key);
 
-    const { Body, ContentType, Metadata } = await S3.send(
-      new GetObjectCommand({
-        Bucket: FULL_RES_BUCKET,
-        Key: key,
-      })
-    );
-
-    console.log("after get");
-
-    console.log("METADATA: " + JSON.stringify(Metadata, null, 2));
-    const buff = Buffer.from(await Body.transformToByteArray());
-    const outputBuffer = await resizeImage(buff);
-
-    console.log("IMage resized");
-
-    await S3.send(
-      new PutObjectCommand({
-        Bucket: THUMBNAIL_BUCKET,
-        Key: key,
-        Body: outputBuffer,
-        ContentType,
-      })
-    );
-
-    const message = `Successfully resized ${FULL_RES_BUCKET}/${key} and uploaded to ${THUMBNAIL_BUCKET}/${key}`;
-    console.log(message);
-    return getResponse(200, { message });
+    return getResponse(200, {});
   } catch (error) {
     console.log(error);
 
     throw error;
   }
+}
+
+async function uploadThumbnail(key) {
+  const { Body, ContentType, Metadata } = await S3.send(
+    new GetObjectCommand({
+      Bucket: FULL_RES_BUCKET,
+      Key: key,
+    })
+  );
+
+  console.log("Original image fetched");
+
+  const buff = Buffer.from(await Body.transformToByteArray());
+  const outputBuffer = await resizeImage(buff);
+
+  await S3.send(
+    new PutObjectCommand({
+      Bucket: THUMBNAIL_BUCKET,
+      Key: key,
+      Body: outputBuffer,
+      ContentType,
+    })
+  );
+
+  console.log(
+    `Successfully resized ${FULL_RES_BUCKET}/${key} and uploaded to ${THUMBNAIL_BUCKET}/${key}`
+  );
+  return { contentType: ContentType, metadata: Metadata };
 }
 
 export async function resizeImage(buffer) {

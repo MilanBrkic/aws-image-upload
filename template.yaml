@@ -36,6 +36,7 @@ Resources:
             AllowMethods: "'GET'" # Methods you want to allow
             AllowHeaders: "'Content-Type'" # Headers you want to allow
             AllowOrigin: "'*'"
+
   # Each Lambda function is defined by properties:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
@@ -46,8 +47,8 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
-      MemorySize: 128
-      Timeout: 29
+      MemorySize: 256
+      Timeout: 60
       Description: A Lambda function that is triggered on every bucket upload
         that generates an image thumbnail
       Policies:
