@@ -1,6 +1,5 @@
 import { getSignedUrlHandler } from "../../../src/handlers/get-signed-url.mjs";
 
-// This includes all tests for getSignedUrlHandler()
 describe("Test getSignedUrlHandler", () => {
   it("happy path", async () => {
     const event = {
@@ -11,10 +10,8 @@ describe("Test getSignedUrlHandler", () => {
       },
     };
 
-    // Invoke getSignedUrlHandler()
     const result = await getSignedUrlHandler(event);
 
-    // Compare the result with the expected result
     expect(result.statusCode).toEqual(200);
     expect(result.body.link).not.toEqual(null);
   });
@@ -25,11 +22,9 @@ describe("Test getSignedUrlHandler", () => {
       queryStringParameters: null,
     };
 
-    // Invoke getSignedUrlHandler()
     const result = await getSignedUrlHandler(event);
 
-    // Compare the result with the expected result
-    expect(result.statusCode).toEqual(404);
+    expect(result.statusCode).toEqual(400);
   });
 
   it("No filename in request", async () => {
@@ -38,11 +33,9 @@ describe("Test getSignedUrlHandler", () => {
       queryStringParameters: {},
     };
 
-    // Invoke getSignedUrlHandler()
     const result = await getSignedUrlHandler(event);
 
-    // Compare the result with the expected result
-    expect(result.statusCode).toEqual(404);
+    expect(result.statusCode).toEqual(400);
   });
 
   it("No filename in request", async () => {
@@ -51,14 +44,12 @@ describe("Test getSignedUrlHandler", () => {
       queryStringParameters: {},
     };
 
-    // Invoke getSignedUrlHandler()
     const result = await getSignedUrlHandler(event);
 
-    // Compare the result with the expected result
-    expect(result.statusCode).toEqual(404);
+    expect(result.statusCode).toEqual(400);
   });
 
-  it("happy path", async () => {
+  it("invalid image format", async () => {
     const event = {
       httpMethod: "GET",
       queryStringParameters: {
@@ -66,10 +57,8 @@ describe("Test getSignedUrlHandler", () => {
       },
     };
 
-    // Invoke getSignedUrlHandler()
     const result = await getSignedUrlHandler(event);
 
-    // Compare the result with the expected result
-    expect(result.statusCode).toEqual(404);
+    expect(result.statusCode).toEqual(400);
   });
 });
