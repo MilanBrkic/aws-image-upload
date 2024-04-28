@@ -9,6 +9,8 @@ describe("Test generateThumb", () => {
       const resized = await resizeImage(buff);
 
       fs.writeFileSync(testDataPath + "/test-img-resize.jpg", resized);
+
+      expect(buff.byteLength > resized.byteLength).toEqual(true);
     });
   });
 });

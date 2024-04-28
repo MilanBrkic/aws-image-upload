@@ -26,7 +26,7 @@ export async function generateThumb(event) {
   try {
     console.log("before get");
 
-    const { Body, ContentType } = await S3.send(
+    const { Body, ContentType, Metadata } = await S3.send(
       new GetObjectCommand({
         Bucket: FULL_RES_BUCKET,
         Key: key,
@@ -35,8 +35,11 @@ export async function generateThumb(event) {
 
     console.log("after get");
 
+    console.log("METADATA: " + JSON.stringify(Metadata, null, 2));
     const buff = Buffer.from(await Body.transformToByteArray());
     const outputBuffer = await resizeImage(buff);
+
+    console.log("IMage resized");
 
     await S3.send(
       new PutObjectCommand({
@@ -52,7 +55,7 @@ export async function generateThumb(event) {
     return getResponse(200, { message });
   } catch (error) {
     console.log(error);
-    return getResponse(500, { error });
+    throw getResponse(500, { error });
   }
 }
 
