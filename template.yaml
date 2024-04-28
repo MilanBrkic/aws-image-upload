@@ -121,6 +121,10 @@ Parameters:
     Type: String
     Description: Name of the full resolution s3 image bucke
     Default: full-res-image-bucket
+  Region:
+    Type: String
+    Description: Name of the full resolution s3 image bucke
+    Default: eu-central-1
 
 Globals:
   Function:
