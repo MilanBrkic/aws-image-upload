@@ -9,7 +9,6 @@ export async function dbConnect() {
     password: process.env.DB_PASSWORD,
   };
 
-  console.log(config);
   const client = new pg.Client(config);
 
   await client.connect();

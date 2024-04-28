@@ -47,7 +47,7 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
-      MemorySize: 256
+      MemorySize: 528
       Timeout: 270
       Description: A Lambda function that is triggered on every bucket upload
         that generates an image thumbnail
@@ -60,7 +60,7 @@ Resources:
           DB_PORT: 5432
           DB_NAME: postgres
           DB_USER: milanb
-          DB_PASSWORD:
+          DB_PASSWORD: neka_sifra
       Events:
         S3Event:
           Type: S3

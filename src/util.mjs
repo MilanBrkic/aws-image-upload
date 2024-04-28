@@ -11,3 +11,14 @@ export function getResponse(statusCode, body) {
     body: JSON.stringify(body),
   };
 }
+
+export async function wrapTimer(executable, ...args) {
+  const startTime = new Date();
+
+  const result = await executable(...args);
+
+  console.log(
+    `Function: ${executable.name} | Time: ${new Date() - startTime}ms`
+  );
+  return result;
+}

@@ -3,9 +3,9 @@ import {
   GetObjectCommand,
   PutObjectCommand,
 } from "@aws-sdk/client-s3";
-import { getResponse } from "../util.mjs";
+import { getResponse, wrapTimer } from "../util.mjs";
 import Jimp from "jimp";
-import { dbConnect, insertImage } from "../db.mjs";
+import { insertImage } from "../db.mjs";
 
 const S3 = new S3Client();
 const FULL_RES_BUCKET =
@@ -15,7 +15,7 @@ const THUMBNAIL_BUCKET =
 const THUMBNAIL_WIDTH = 200;
 
 export async function generateThumb(event) {
-  console.log(event);
+  console.log("Received event: " + JSON.stringify(event, null, 2));
 
   const record = event.Records[0];
   if (!record?.s3?.object?.key) {
@@ -38,7 +38,8 @@ export async function generateThumb(event) {
 }
 
 async function uploadThumbnail(key) {
-  const { Body, ContentType, Metadata } = await S3.send(
+  const { Body, ContentType, Metadata } = await wrapTimer(
+    S3.send.bind(S3),
     new GetObjectCommand({
       Bucket: FULL_RES_BUCKET,
       Key: key,
@@ -48,7 +49,7 @@ async function uploadThumbnail(key) {
   console.log("Original image fetched");
 
   const buff = Buffer.from(await Body.transformToByteArray());
-  const outputBuffer = await resizeImage(buff);
+  const outputBuffer = await wrapTimer(resizeImage, buff);
 
   await S3.send(
     new PutObjectCommand({
