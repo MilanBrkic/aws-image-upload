@@ -55,7 +55,8 @@ export async function generateThumb(event) {
     return getResponse(200, { message });
   } catch (error) {
     console.log(error);
-    throw getResponse(500, { error });
+
+    throw error;
   }
 }
 
