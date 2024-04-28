@@ -10,7 +10,7 @@ Resources:
   # Each Lambda function is defined by properties:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
-  getSignedUrlHandler:
+  GetSignedUrlHandler:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/get-signed-url.getSignedUrlHandler
@@ -23,6 +23,8 @@ Resources:
         the presigned url for image upload
       Policies:
       Environment:
+        Variables:
+          FULL_RES_BUCKET_NAME: !Ref FullResBucketName
       Events:
         Api:
           Type: Api
@@ -50,6 +52,8 @@ Resources:
         that generates an image thumbnail
       Policies:
       Environment:
+        Variables:
+          FULL_RES_BUCKET_NAME: !Ref FullResBucketName
       Events:
         S3Event:
           Type: S3
@@ -60,7 +64,7 @@ Resources:
   FullResImageBucket:
     Type: "AWS::S3::Bucket"
     Properties:
-      BucketName: full-res-image-bucket
+      BucketName: !Ref FullResBucketName
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false
         BlockPublicPolicy: false
@@ -111,6 +115,12 @@ Outputs:
     Description: Name of the sample Amazon S3 bucket with CORS enabled.
 
 # # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+
+Parameters:
+  FullResBucketName:
+    Type: String
+    Description: Name of the full resolution s3 image bucke
+    Default: full-res-image-bucket
 
 Globals:
   Function:

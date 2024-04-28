@@ -10,7 +10,7 @@ const s3 = new S3({
 });
 
 const bucketParams = {
-  Bucket: "full-res-image-bucket",
+  Bucket: process.env.FULL_RES_BUCKET_NAME ?? "full-res-image-bucket",
 };
 
 const allowedExtensions = ["jpg", "jpeg", "png", "svg", "gif"];
