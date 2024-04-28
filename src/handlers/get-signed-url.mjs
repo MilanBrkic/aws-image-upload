@@ -3,11 +3,11 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { randomUUID } from "crypto";
 import { getResponse } from "../util.mjs";
 
-const region = process.env.FULL_RES_BUCKET_NAME ?? "eu-central-1";
-const bucketName = process.env.FULL_RES_BUCKET_NAME ?? "full-res-image-bucket";
+const REGION = process.env.REGION ?? "eu-central-1";
+const BUCKET = process.env.FULL_RES_BUCKET_NAME ?? "full-res-image-bucket";
 
 const s3 = new S3({
-  region,
+  region: REGION,
 });
 
 const allowedExtensions = ["jpg", "jpeg", "png", "svg", "gif"];
@@ -43,7 +43,7 @@ async function getUrl(originalName) {
     const key = `${randomUUID()}`;
 
     const command = new PutObjectCommand({
-      Bucket: bucketName,
+      Bucket: BUCKET,
       Key: key,
       Metadata: {
         originalName,

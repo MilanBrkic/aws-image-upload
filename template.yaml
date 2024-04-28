@@ -54,6 +54,7 @@ Resources:
       Environment:
         Variables:
           FULL_RES_BUCKET_NAME: !Ref FullResBucketName
+          THUMBNAIL_BUCKET_NAME: !Ref ThumbnailBucketName
       Events:
         S3Event:
           Type: S3
@@ -80,7 +81,21 @@ Resources:
             AllowedOrigins:
               - "*"
 
-  BucketPolicy:
+  # ThumbnailBucket:
+  #   Type: "AWS::S3::Bucket"
+  #   Properties:
+  #     BucketName: !Ref ThumbnailBucketName
+  # CorsConfiguration:
+  #   CorsRules:
+  #     - AllowedHeaders:
+  #         - "*"
+  #       AllowedMethods:
+  #         - GET
+  #         - PUT
+  #       AllowedOrigins:
+  #         - "*"
+
+  FullResBucketPolicy:
     Type: "AWS::S3::BucketPolicy"
     Properties:
       Bucket: !Ref FullResImageBucket
@@ -92,6 +107,19 @@ Resources:
             Principal: "*"
             Action: "s3:PutObject"
             Resource: "arn:aws:s3:::full-res-image-bucket/*"
+
+  # ThumbnailBucketPolicy:
+  #   Type: "AWS::S3::BucketPolicy"
+  #   Properties:
+  #     Bucket: !Ref ThumbnailBucketName
+  #     PolicyDocument:
+  #       Version: "2012-10-17"
+  #       Statement:
+  #         - Sid: "Statement1"
+  #           Effect: "Allow"
+  #           Principal: "*"
+  #           Action: ["s3:GetObject", "s3:PutObject"]
+  #           Resource: "arn:aws:s3:::thumbnail-image-bucket/*"
 
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
@@ -121,6 +149,10 @@ Parameters:
     Type: String
     Description: Name of the full resolution s3 image bucke
     Default: full-res-image-bucket
+  ThumbnailBucketName:
+    Type: String
+    Description: Name of the bucket for storing image thumbnails
+    Default: thumbnail-image-bucket
   Region:
     Type: String
     Description: Name of the full resolution s3 image bucke

@@ -5,7 +5,8 @@
     "private": true,
     "dependencies": {
         "@aws-sdk/client-s3": "^3.564.0",
-        "@aws-sdk/s3-request-presigner": "^3.564.0"
+        "@aws-sdk/s3-request-presigner": "^3.564.0",
+        "sharp": "^0.33.3"
     },
     "devDependencies": {
         "aws-sdk-client-mock": "^2.0.0",
@@ -21,7 +22,7 @@
             "**/__tests__/**/*.mjs?(x)",
             "**/?(*.)+(spec|test).mjs?(x)"
         ],
-        "testPathIgnorePatterns":[
+        "testPathIgnorePatterns": [
             "/.aws-sam"
         ],
         "moduleFileExtensions": [
