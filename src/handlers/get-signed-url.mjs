@@ -43,8 +43,7 @@ export async function getSignedUrlHandler(event) {
 
 async function getUrl(filename) {
   try {
-    const extension = getExtension(filename);
-    const key = `${randomUUID()}.${extension}`;
+    const key = `${randomUUID()}`;
 
     const command = new PutObjectCommand({
       ...bucketParams,
