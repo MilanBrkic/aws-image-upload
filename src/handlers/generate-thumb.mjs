@@ -6,6 +6,12 @@ import {
 import { getResponse, wrapTimer } from "../util.mjs";
 import Jimp from "jimp";
 import { insertImage } from "../db.mjs";
+import {
+  SubscribeCommand,
+  SNSClient,
+  SNS,
+  PublishCommand,
+} from "@aws-sdk/client-sns";
 
 const S3 = new S3Client();
 const FULL_RES_BUCKET =
@@ -32,7 +38,7 @@ export async function generateThumb(event) {
     return getResponse(200, {});
   } catch (error) {
     console.log(error);
-
+    await sendEmail(error);
     throw error;
   }
 }
@@ -80,3 +86,17 @@ export async function resizeImage(buffer) {
     throw error;
   }
 }
+
+export const sendEmail = async (
+  error,
+  topicArn = "arn:aws:sns:eu-central-1:058264164034:email-notification"
+) => {
+  const client = new SNSClient({});
+  const response = await client.send(
+    new PublishCommand({
+      Message: "Error occured while converting to thumbnail: " + error.message,
+      TopicArn: topicArn,
+    })
+  );
+  console.log(response);
+};

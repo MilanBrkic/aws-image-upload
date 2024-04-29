@@ -47,7 +47,7 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
-      MemorySize: 528
+      MemorySize: 1024
       Timeout: 270
       Description: A Lambda function that is triggered on every bucket upload
         that generates an image thumbnail
