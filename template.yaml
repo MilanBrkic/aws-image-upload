@@ -131,6 +131,20 @@ Resources:
       Roles:
         - !Ref GenerateThumbRole
 
+  SNSPublishPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: SNSPublishPolicy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - sns:Publish
+            Resource: "*"
+      Roles:
+        - !Ref GenerateThumbRole
+
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
     Properties:
