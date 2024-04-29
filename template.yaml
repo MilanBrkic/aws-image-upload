@@ -61,6 +61,7 @@ Resources:
           DB_NAME: postgres
           DB_USER: milanb
           DB_PASSWORD: neka_sifra
+          EMAIL_TOPIC: !Ref EmailNotificationTopic
       Events:
         S3Event:
           Type: S3
@@ -101,6 +102,18 @@ Resources:
     Type: "AWS::S3::Bucket"
     Properties:
       BucketName: !Ref ThumbnailImageBucketName
+
+  EmailNotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: EmailNotification
+
+  MyEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: email
+      TopicArn: !Ref EmailNotificationTopic
+      Endpoint: milan.brkic1998@gmail.com
 
   FullResBucketPolicy:
     Type: "AWS::S3::BucketPolicy"

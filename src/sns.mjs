@@ -1,9 +1,6 @@
 import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 
-export async function sendEmail(
-  error,
-  topicArn = "arn:aws:sns:eu-central-1:058264164034:email-notification"
-) {
+export async function sendEmail(error, topicArn = process.env.EMAIL_TOPIC) {
   const client = new SNSClient({});
 
   try {
